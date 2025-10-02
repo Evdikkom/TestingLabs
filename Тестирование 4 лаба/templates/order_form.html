@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма оформления заказа</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffb0f7;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: oklch(65.169% 0.2643 312.638);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #a617ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #d51cff;
+        }
+        .error-message {
+            color: #d9534f;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .success-message {
+            color: #28a745;
+            font-size: 16px;
+            padding: 10px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .field-error {
+            color: #d9534f;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Оформление заказа</h1>
+        <form id="order-form">
+            <div class="form-group">
+                <label for="name">Имя *</label>
+                <input type="text" id="name" name="name" required>
+                <div id="name-error" class="field-error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required>
+                <div id="email-error" class="field-error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Телефон *</label>
+                <input type="tel" id="phone" name="phone" required>
+                <div id="phone-error" class="field-error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="address">Адрес доставки *</label>
+                <input type="text" id="address" name="address" required>
+                <div id="address-error" class="field-error"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="comment">Комментарий к заказу</label>
+                <textarea id="comment" name="comment"></textarea>
+            </div>
+            
+            <button type="submit" id="submit-btn">Оформить заказ</button>
+            
+            <div id="success-message" class="success-message" style="display: none;"></div>
+            <div id="error-message" class="error-message" style="display: none;"></div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('order-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Сброс сообщений об ошибках
+            document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('success-message').style.display = 'none';
+            
+            const formData = new FormData(this);
+            const response = await fetch('/submit-order', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                document.getElementById('success-message').textContent = result.message;
+                document.getElementById('success-message').style.display = 'block';
+                document.getElementById('order-form').reset();
+            } else {
+                // Отображение ошибок полей
+                for (const [field, error] of Object.entries(result.errors)) {
+                    const errorElement = document.getElementById(`${field}-error`);
+                    if (errorElement) {
+                        errorElement.textContent = error;
+                    }
+                }
+                
+                // Отображение общего сообщения об ошибке
+                if (Object.keys(result.errors).length > 0) {
+                    document.getElementById('error-message').textContent = 'Пожалуйста, исправьте ошибки в форме';
+                    document.getElementById('error-message').style.display = 'block';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

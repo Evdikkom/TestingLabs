@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ea8dff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            min-height: 100vh;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #cd10c1;
+            padding-bottom: 0.5rem;
+        }
+        .user-info {
+            background-color: #f8dfff;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+        }
+        .logout-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #dc35c3;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 1rem;
+        }
+        .logout-btn:hover {
+            background-color: #9f23c8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Главная страница</h1>
+        
+        <div class="user-info">
+            <p>Добро пожаловать, <strong id="user-name">Загрузка...</strong>!</p>
+            <p>Ваш логин: <strong id="user-login">Загрузка...</strong></p>
+        </div>
+        
+        <h2>Расписание</h2>
+        <p>Здесь будет ваше расписание занятий.</p>
+        
+        <h2>Успеваемость</h2>
+        <p>Здесь будет информация о вашей успеваемости.</p>
+        
+        <a href="/logout" class="logout-btn">Выход</a>
+    </div>
+
+    <script>
+        // Функция для получения параметров из URL
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const regex = /([^&=]+)=([^&]*)/g;
+            let match;
+            
+            while (match = regex.exec(queryString)) {
+                params[decodeURIComponent(match[1])] = decodeURIComponent(match[2]);
+            }
+            
+            return params;
+        }
+
+        // Установка значений из параметров URL или использование значений по умолчанию
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = getQueryParams();
+            const userName = params.name || 'А.Р. Евдокимов';
+            const userLogin = params.username || 'a.r.evdokimov';
+            
+            document.getElementById('user-name').textContent = userName;
+            document.getElementById('user-login').textContent = userLogin;
+        });
+    </script>
+</body>
+</html>
